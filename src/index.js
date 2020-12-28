@@ -1,17 +1,47 @@
-import React from 'react';
+import React , { useState,useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Tours from './Tours';
+import './index.css'
+
+const url = 'https://course-api.com/react-tours-project';
+
+const Page = () => {
+
+  const [data,setData] = useState([]);
+  const [isLoading,setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    const response = await fetch(url);
+    const tours = await response.json();
+    console.log(tours);
+    setIsLoading(false);
+    setData(tours);
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  if(isLoading) {
+    return <h1>Loading...</h1>
+  }
+
+  function removeEle(id) {
+    const removedArr = data.filter((tour) => tour.id !== id);
+    setData(removedArr);
+  }
+
+  return (
+  <>
+    <main>
+      <h1>Our Tours</h1>
+      <Tours tours={data} removeEle={removeEle}/> 
+    </main>
+  </>
+  );
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Page/>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
